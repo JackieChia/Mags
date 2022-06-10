@@ -1,3 +1,5 @@
 # Mags
+
 A Collection of Foreign Mags n Newspapers 
-TE20220611
+
+The Economist,The New Yorker,Times,National Geographic, &
