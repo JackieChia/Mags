@@ -4,6 +4,6 @@ The Economist,The New Yorker,Times,National Geographic, &
 
 # Table of Contents:
 
-## 1.The Economist
+### 1.The Economist 
 
-## 2.The New Yorker
+### 2.The New Yorker
