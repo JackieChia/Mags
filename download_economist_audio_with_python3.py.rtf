@@ -1,0 +1,212 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2638
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset134 PingFangSC-Regular;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 #!/usr/bin/env python3\
+\
+r'''\
+see : https://www.52pojie.cn/thread-1095632-1-1.html\
+\
+gen te mp3 download list\
+\
+2020\
+curl -I http://audiocdn.economist.com/sites/default/files/AudioArchive/2020/20200104/Issue_9175_20200104_The_Economist_Full_edition.zip  # OK\
+\
+2018\
+9073 20180106\
+...\
+9124 20181229\
+\
+2019\
+9124 20190105\
+\
+20191221 9174\
+\
+'''\
+\
+from datetime import datetime, timedelta\
+import sys\
+\
+\
+# 
+\f1 \'c3\'bf\'c4\'ea\'b5\'c4\'c6\'da\'ca\'fd
+\f0 \
+ISSUE_COUNT_ONE_YEAR = 51\
+BASE_STARTING_ISSUE_2020 = 9175\
+BASE_DATE_2020 = '20200104'\
+\
+# 2018\
+# def gen_dl_addr(issue_no=9073, starting_issue=9073, base_date='20180106'):\
+# 2019\
+# def gen_dl_addr(issue_no=9124, starting_issue=9124, base_date='20190105'):\
+# 2020\
+def gen_dl_addr(issue_no: int = BASE_STARTING_ISSUE_2020,\
+                starting_issue: int = BASE_STARTING_ISSUE_2020,\
+                base_date: str = BASE_DATE_2020) -> str:\
+    ''' gen_dl_addr '''\
+    if issue_no < starting_issue:\
+        issue_no = starting_issue\
+\
+    base_date_ = datetime.strptime(base_date, '%Y%m%d')\
+    day_diff = issue_no - starting_issue\
+    curr_date = base_date_ + timedelta(day_diff * 7)\
+\
+    date_str = datetime.strftime(curr_date, '%Y%m%d')\
+    year_str = datetime.strftime(curr_date, '%Y')\
+\
+    dl_str = f'http://audiocdn.economist.com/sites/default/files/AudioArchive/\{year_str\}/\{date_str\}/Issue_\{issue_no\}_\{date_str\}_The_Economist_Full_edition.zip'\
+    return ' '.join([date_str, str(issue_no), dl_str]) + '\\n'\
+\
+\
+def generate_for_year(file_name, starting_issue, base_date, total_issue):\
+    with open(file_name, 'wt', encoding='utf-8') as file:\
+        # 
+\f1 \'cd\'a8\'b3\'a3\'c3\'bf\'c4\'ea\'d6\'bb\'d3\'d0
+\f0 51
+\f1 \'c6\'da
+\f0 , 
+\f1 \'b5\'ab\'ca\'c7\'c8\'e7\'b9\'fb
+\f0 52
+\f1 \'c6\'da\'b5\'c4\'b3\'f6\'b0\'e6\'c8\'d5\'c6\'da\'d4\'da\'ca\'a5\'b5\'ae\'bd\'da\'d6\'ae\'c7\'b0\'d4\'f2\'ce\'aa
+\f0  52 
+\f1 \'c6\'da
+\f0 \
+        for elm in range(starting_issue, starting_issue + total_issue):\
+            file.write(gen_dl_addr(issue_no=elm, starting_issue=starting_issue,\
+                                    base_date=base_date))\
+\
+def find_first_saturday_of_year(year):\
+    """\
+    
+\f1 \'d1\'b0\'d5\'d2\'c4\'b3\'d2\'bb\'c4\'ea\'b5\'c4\'b5\'da\'d2\'bb\'b8\'f6\'d6\'dc\'c1\'f9
+\f0 , 
+\f1 \'d2\'b2\'be\'cd\'ca\'c7\'b5\'b1\'c4\'ea\'b5\'c4\'be\'ad\'bc\'c3\'d1\'a7\'c8\'cb\'b5\'da\'d2\'bb\'c6\'da\'b5\'c4\'b7\'a2\'d0\'d0\'c8\'d5\'c6\'da
+\f0 \
+    :param year:\
+    :return:\
+    """\
+    first_date = "\{\}0101".format(year)\
+    f_date = datetime.strptime(first_date, '%Y%m%d')\
+    # 
+\f1 \'b5\'b1\'c4\'ea\'b5\'c4
+\f0 1
+\f1 \'d4\'c2
+\f0 1
+\f1 \'ba\'c5\'be\'e0\'c0\'eb\'b1\'be\'d6\'dc\'b5\'c4\'d6\'dc\'c1\'f9\'b2\'ee\'bc\'b8\'cc\'ec
+\f0 \
+    days_offset = 5 - f_date.weekday() if f_date.weekday() <= 5 else 6\
+    if days_offset != 0 :\
+        f_date = f_date + timedelta(days=days_offset)\
+    return f_date\
+\
+\
+def calc_issue_count_of_year(first_date):\
+    date_after_51_issue = first_date + timedelta(days=(ISSUE_COUNT_ONE_YEAR - 1) * 7)\
+    try_to_date_str = (date_after_51_issue + timedelta(days=7)).strftime('%Y%m%d')\
+    # 51
+\f1 \'c6\'da\'d6\'ae\'ba\'f3
+\f0 , 
+\f1 \'c8\'e7\'b9\'fb\'d4\'d9\'bc\'d3\'d2\'bb\'c6\'f0\'b5\'c4\'c8\'d5\'c6\'da\'d0\'a1\'d3\'da\'ca\'a5\'b5\'ae\'bd\'da\'b5\'c4\'c8\'d5\'c6\'da
+\f0 , 
+\f1 \'c4\'c7\'c3\'b4\'c4\'c7\'d2\'bb\'c4\'ea\'ce\'aa
+\f0 52
+\f1 \'c6\'da
+\f0 \
+    return ISSUE_COUNT_ONE_YEAR if try_to_date_str >= "\{\}1225".format(first_date.year) else ISSUE_COUNT_ONE_YEAR + 1\
+\
+\
+def calc_issue_num_offset(year):\
+    """\
+    
+\f1 \'bc\'c6\'cb\'e3\'c4\'b3\'d2\'bb\'c4\'ea\'b5\'c4\'c6\'e4\'ca\'b5
+\f0  issue number\
+    :param year:\
+    :return:\
+    """\
+    cur_issue_num = BASE_STARTING_ISSUE_2020\
+    if year < 2020:\
+        for index in range(1, 2020 - year + 1):\
+            first_date = find_first_saturday_of_year(2020 - index)\
+            cur_issue_num -= calc_issue_count_of_year(first_date=first_date)\
+    else:\
+        for new_year in range(2020, year + 1):\
+            first_date = find_first_saturday_of_year(new_year)\
+            cur_issue_num += calc_issue_count_of_year(first_date=first_date)\
+    return cur_issue_num\
+\
+\
+def make_audio_download_urls_for_year(year):\
+    """\
+    
+\f1 \'ca\'e4\'b3\'f6\'c4\'b3\'d2\'bb\'c4\'ea\'b5\'c4\'d2\'f4\'c6\'b5\'cf\'c2\'d4\'d8\'b5\'d8\'d6\'b7\'b5\'bd\'d6\'b8\'b6\'a8\'ce\'c4\'bc\'fe\'d6\'d0
+\f0 \
+    :param year:\
+    :return:\
+    """\
+    if year < 2012:\
+        print('==> 
+\f1 \'ba\'f6\'c2\'d4\'cf\'c2\'d4\'d8
+\f0 \{\}, 
+\f1 \'d2\'f4\'c6\'b5\'d7\'ee\'d4\'e7\'bf\'c9\'d2\'d4\'cf\'c2\'d4\'d8
+\f0  2012
+\f1 \'c4\'ea
+\f0 07.28!'.format(year))\
+        return\
+    file_name = f'\{year\}-te-audio-urls.txt'\
+    print('=> output : ' + file_name)\
+    f_date = find_first_saturday_of_year(year)\
+\
+    start_issue_num = calc_issue_num_offset(year)\
+    issue_count_this_year = calc_issue_count_of_year(first_date=f_date)\
+    print('\{\} for \{\}, total : \{\}'.format(start_issue_num, f_date.year, issue_count_this_year))\
+    generate_for_year(file_name, start_issue_num, f_date.strftime('%Y%m%d'), total_issue=issue_count_this_year)\
+\
+\
+if __name__ == '__main__':\
+    """
+\f1 \'cf\'c2\'d4\'d8\'be\'ad\'bc\'c3\'d1\'a7\'c8\'cb\'d2\'f4\'c6\'b5
+\f0 , 
+\f1 \'c4\'bf\'c7\'b0\'d7\'ee\'d4\'e7\'d3\'a6\'b8\'c3\'ca\'c7\'b5\'bd
+\f0 2012
+\f1 \'c4\'ea
+\f0 07.28."""\
+    if len(sys.argv) < 2:\
+        raise Exception("
+\f1 \'d0\'e8\'d2\'aa\'b4\'ab\'b5\'dd\'d2\'aa\'ca\'e4\'b3\'f6\'b5\'c4\'c4\'ea\'b7\'dd
+\f0 ")\
+\
+    # 2018-01-06, https://audiocdn.economist.com/sites/default/files/AudioArchive/2018/20180106/Issue_9073_20180106_The_Economist_Full_edition.zip\
+    # starting_issue = 9073\
+    # base_date = '20180106'\
+\
+    # 2021\
+    # starting_issue = 9226\
+    # base_date='20210102'\
+\
+    year_args = sys.argv[1]\
+    # 
+\f1 \'d2\'bb\'b4\'ce\'d0\'d4\'b4\'ab\'b5\'dd\'b6\'e0\'c4\'ea
+\f0 , 
+\f1 \'c0\'fd\'c8\'e7
+\f0  2010-2018 
+\f1 \'b1\'ed\'ca\'be\'ca\'e4\'b3\'f6
+\f0  2010
+\f1 \'b5\'bd
+\f0 2018
+\f1 \'c4\'ea\'b5\'c4\'d2\'f4\'c6\'b5\'cf\'c2\'d4\'d8\'b8\'f1\'ca\'bd
+\f0 \
+    if '-' in year_args:\
+        year_parts = year_args.split('-')\
+        year_start = int(year_parts[0])\
+        year_end = int(year_parts[1])\
+        if year_start < year_end:\
+            for a_year in range(year_start, year_end + 1):\
+                make_audio_download_urls_for_year(a_year)\
+        else:\
+            make_audio_download_urls_for_year(year_start)\
+            make_audio_download_urls_for_year(year_end)\
+    else:\
+        make_audio_download_urls_for_year(int(year_args))}
